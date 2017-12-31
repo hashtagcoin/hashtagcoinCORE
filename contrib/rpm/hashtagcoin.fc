@@ -1,0 +1,8 @@
+/usr/bin/hashtagcoin-cli		--	gen_context(system_u:object_r:hashtagcoin_exec_t,s0)
+/usr/sbin/hashtagcoind		--	gen_context(system_u:object_r:hashtagcoin_exec_t,s0)
+/usr/lib(64)?/hashtagcoin/hashtagcoind		--	gen_context(system_u:object_r:hashtagcoin_exec_t,s0)
+
+/etc/hashtagcoin(/.*)?		gen_context(system_u:object_r:hashtagcoin_conf_t,s0)
+/var/lib/hashtagcoin(/.*)?		gen_context(system_u:object_r:hashtagcoin_var_lib_t,s0)
+
+(/var)?/run/hashtagcoind(/.*)?   gen_context(system_u:object_r:hashtagcoin_var_run_t,s0)

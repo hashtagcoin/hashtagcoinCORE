@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/hashtagcoin/.hashtagcoin" ]; then
+	HASHTAGCOIND_DEFAULT_DATADIR="/var/lib/hashtagcoin/.hashtagcoin"
+else
+	HASHTAGCOIND_DEFAULT_DATADIR="/var/lib/hashtagcoind"
+fi
+
+HASHTAGCOIND_CONFIGFILE=${HASHTAGCOIND_CONFIGFILE:-/etc/hashtagcoin/hashtagcoin.conf}
+HASHTAGCOIND_PIDDIR=${HASHTAGCOIND_PIDDIR:-/var/run/hashtagcoind}
+HASHTAGCOIND_PIDFILE=${HASHTAGCOIND_PIDFILE:-${HASHTAGCOIND_PIDDIR}/hashtagcoind.pid}
+HASHTAGCOIND_DATADIR=${HASHTAGCOIND_DATADIR:-${HASHTAGCOIND_DEFAULT_DATADIR}}
+HASHTAGCOIND_USER=${HASHTAGCOIND_USER:-${HASHTAGCOIN_USER:-hashtagcoin}}
+HASHTAGCOIND_GROUP=${HASHTAGCOIND_GROUP:-hashtagcoin}
+HASHTAGCOIND_BIN=${HASHTAGCOIND_BIN:-/usr/bin/hashtagcoind}
+HASHTAGCOIND_NICE=${HASHTAGCOIND_NICE:-${NICELEVEL:-0}}
+HASHTAGCOIND_OPTS="${HASHTAGCOIND_OPTS:-${HASHTAGCOIN_OPTS}}"
+
+name="Hashtagcoin Core Daemon"
+description="Hashtagcoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/hashtagcoind"
+command_args="-pid=\"${HASHTAGCOIND_PIDFILE}\" \
+		-conf=\"${HASHTAGCOIND_CONFIGFILE}\" \
+		-datadir=\"${HASHTAGCOIND_DATADIR}\" \
+		-daemon \
+		${HASHTAGCOIND_OPTS}"
+
+required_files="${HASHTAGCOIND_CONFIGFILE}"
+start_stop_daemon_args="-u ${HASHTAGCOIND_USER} \
+			-N ${HASHTAGCOIND_NICE} -w 2000"
+pidfile="${HASHTAGCOIND_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${HASHTAGCOIND_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${HASHTAGCOIND_USER}:${HASHTAGCOIND_GROUP}" \
+	"${HASHTAGCOIND_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${HASHTAGCOIND_USER}:${HASHTAGCOIND_GROUP}" \
+	"${HASHTAGCOIND_PIDDIR}"
+
+	checkpath -f \
+	-o ${HASHTAGCOIND_USER}:${HASHTAGCOIND_GROUP} \
+	-m 0660 \
+	${HASHTAGCOIND_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${HASHTAGCOIND_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run hashtagcoind."
+		eerror "The setting must appear in ${HASHTAGCOIND_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Hashtagcoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

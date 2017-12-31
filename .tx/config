@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[hashtagcoin.qt-translation-014x]
+file_filter = src/qt/locale/hashtagcoin_<lang>.ts
+source_file = src/qt/locale/hashtagcoin_en.ts
+source_lang = en

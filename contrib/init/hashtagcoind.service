@@ -1,0 +1,22 @@
+[Unit]
+Description=Hashtagcoin's distributed currency daemon
+After=network.target
+
+[Service]
+User=hashtagcoin
+Group=hashtagcoin
+
+Type=forking
+PIDFile=/var/lib/hashtagcoind/hashtagcoind.pid
+ExecStart=/usr/bin/hashtagcoind -daemon -pid=/var/lib/hashtagcoind/hashtagcoind.pid \
+-conf=/etc/hashtagcoin/hashtagcoin.conf -datadir=/var/lib/hashtagcoind -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

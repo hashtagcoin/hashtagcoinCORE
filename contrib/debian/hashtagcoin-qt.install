@@ -1,0 +1,6 @@
+usr/local/bin/hashtagcoin-qt usr/bin
+share/pixmaps/hashtagcoin32.xpm usr/share/pixmaps
+share/pixmaps/hashtagcoin16.xpm usr/share/pixmaps
+share/pixmaps/hashtagcoin128.png usr/share/pixmaps
+debian/hashtagcoin-qt.desktop usr/share/applications
+debian/hashtagcoin-qt.protocol usr/share/kde4/services/

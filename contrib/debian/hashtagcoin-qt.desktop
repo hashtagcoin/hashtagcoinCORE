@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Hashtagcoin Core
+Comment=Connect to the Hashtagcoin P2P Network
+Comment[de]=Verbinde mit dem Hashtagcoin peer-to-peer Netzwerk
+Comment[fr]=Hashtagcoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Hashtagcoin, eşten eşe kriptografik sanal para birimi
+Exec=hashtagcoin-qt %u
+Terminal=false
+Type=Application
+Icon=hashtagcoin128
+MimeType=x-scheme-handler/hashtagcoin;
+Categories=Office;Finance;

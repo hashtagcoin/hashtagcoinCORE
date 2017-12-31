@@ -1,0 +1,33 @@
+# /etc/conf.d/hashtagcoind: config file for /etc/init.d/hashtagcoind
+
+# Config file location
+#HASHTAGCOIND_CONFIGFILE="/etc/hashtagcoin/hashtagcoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $HASHTAGCOIND_USER)
+#HASHTAGCOIND_PIDDIR="/var/run/hashtagcoind"
+
+# What filename to give the pidfile
+#HASHTAGCOIND_PIDFILE="${HASHTAGCOIND_PIDDIR}/hashtagcoind.pid"
+
+# Where to write hashtagcoind data (be mindful that the blockchain is large)
+#HASHTAGCOIND_DATADIR="/var/lib/hashtagcoind"
+
+# User and group to own hashtagcoind process
+#HASHTAGCOIND_USER="hashtagcoin"
+#HASHTAGCOIND_GROUP="hashtagcoin"
+
+# Path to hashtagcoind executable
+#HASHTAGCOIND_BIN="/usr/bin/hashtagcoind"
+
+# Nice value to run hashtagcoind under
+#HASHTAGCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+HASHTAGCOIND_OPTS="-disablewallet"
+
+# The timeout in seconds OpenRC will wait for hashtagcoind to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+HASHTAGCOIND_SIGTERM_TIMEOUT=60

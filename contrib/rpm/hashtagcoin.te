@@ -1,0 +1,81 @@
+policy_module(hashtagcoin, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type hashtagcoin_t;
+type hashtagcoin_exec_t;
+init_daemon_domain(hashtagcoin_t, hashtagcoin_exec_t)
+
+permissive hashtagcoin_t;
+
+type hashtagcoin_initrc_exec_t;
+init_script_file(hashtagcoin_initrc_exec_t)
+
+type hashtagcoin_conf_t;
+files_type(hashtagcoin_conf_t)
+
+type hashtagcoin_var_lib_t;
+files_type(hashtagcoin_var_lib_t)
+
+type hashtagcoin_var_run_t;
+files_type(hashtagcoin_var_run_t)
+
+type hashtagcoin_port_t;
+corenet_port(hashtagcoin_port_t)
+
+########################################
+#
+# hashtagcoin local policy
+#
+allow hashtagcoin_t self:process { fork };
+
+allow hashtagcoin_t self:fifo_file rw_fifo_file_perms;
+allow hashtagcoin_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(hashtagcoin_t, hashtagcoin_conf_t, hashtagcoin_conf_t)
+manage_files_pattern(hashtagcoin_t, hashtagcoin_conf_t, hashtagcoin_conf_t)
+
+manage_dirs_pattern(hashtagcoin_t, hashtagcoin_var_lib_t, hashtagcoin_var_lib_t)
+manage_files_pattern(hashtagcoin_t, hashtagcoin_var_lib_t, hashtagcoin_var_lib_t)
+files_var_lib_filetrans(hashtagcoin_t, hashtagcoin_var_lib_t, { dir file })
+
+manage_dirs_pattern(hashtagcoin_t, hashtagcoin_var_run_t, hashtagcoin_var_run_t)
+manage_files_pattern(hashtagcoin_t, hashtagcoin_var_run_t, hashtagcoin_var_run_t)
+
+sysnet_dns_name_resolve(hashtagcoin_t)
+corenet_all_recvfrom_unlabeled(hashtagcoin_t)
+
+allow hashtagcoin_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(hashtagcoin_t)
+corenet_tcp_sendrecv_generic_node(hashtagcoin_t)
+corenet_tcp_sendrecv_all_ports(hashtagcoin_t)
+corenet_tcp_bind_generic_node(hashtagcoin_t)
+
+gen_require(`
+    type hashtagcoin_port_t;
+')
+allow hashtagcoin_t hashtagcoin_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type hashtagcoin_port_t;
+')
+allow hashtagcoin_t hashtagcoin_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(hashtagcoin_t)
+
+files_read_etc_files(hashtagcoin_t)
+
+miscfiles_read_localization(hashtagcoin_t)
+
+sysnet_dns_name_resolve(hashtagcoin_t)
+
+allow hashtagcoin_t hashtagcoin_exec_t:file execute_no_trans;
+allow hashtagcoin_t self:process setsched;
+corecmd_exec_ls(hashtagcoin_t)
+corenet_tcp_connect_http_port(hashtagcoin_t)
+dev_read_urand(hashtagcoin_t)
+fs_getattr_xattr_fs(hashtagcoin_t)
+kernel_read_system_state(hashtagcoin_t)
